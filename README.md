@@ -2,4 +2,5 @@
 
 Daily ranking game. Live at https://playballpark.xyz
 
-The whole site is `index.html` (puzzles are built into it). Hosted on Cloudflare Pages: every push to `main` redeploys.
+The site lives in `public/` (puzzles are built into `public/index.html`).
+Hosted on Cloudflare Workers (static assets): every push to `main` redeploys automatically.
