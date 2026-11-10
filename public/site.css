@@ -222,4 +222,6 @@ footer { padding: 24px 16px 40px; font-size: 12px; color: var(--muted); text-ali
 .answer li { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .answer li span:first-child::before { counter-increment: r; content: counter(r) ". "; color: var(--muted); }
 .answer li span:last-child { font-weight: 700; white-space: nowrap; }
-.cta { display: inline-block; margin-top: 8px; text-decoration: none; }
+.cta { display: inline-flex; margin-top: 8px; text-decoration: none; }
+.page a.btn { color: var(--accent-ink); }
+.page a.btn.outline { color: var(--accent); }
