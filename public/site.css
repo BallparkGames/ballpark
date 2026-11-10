@@ -81,6 +81,18 @@ main { padding: 24px 0 64px; }
 .tile-title { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(28px, 4vw, 38px); line-height: 1.05; }
 .tile-foot { display: flex; flex-direction: column; gap: 8px; }
 .tile-daily { border: 2px solid var(--accent); }
+.archive-card { margin-top: 16px; display: flex; align-items: center; gap: 20px; padding: 20px 24px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow); transition: transform .15s ease, border-color .15s ease; }
+.archive-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+.archive-card .stack { position: relative; width: 74px; height: 64px; flex: none; }
+.archive-card .stack span { position: absolute; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+.archive-card .stack span:nth-child(1) { left: 0; top: 12px; transform: rotate(-8deg); background: var(--bg); }
+.archive-card .stack span:nth-child(2) { left: 11px; top: 6px; transform: rotate(-3deg); color: var(--ink-2); }
+.archive-card .stack span:nth-child(3) { left: 22px; top: 0; background: var(--accent); border-color: var(--accent); color: #fff; font-size: 15px; }
+.archive-text { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.archive-text b { font-family: var(--display); font-weight: 800; font-size: 22px; }
+.archive-text span { color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+.archive-go { flex: none; white-space: nowrap; }
+@media (max-width: 640px) { .archive-card { flex-wrap: wrap; padding: 20px; } .archive-go { width: 100%; justify-content: center; } }
 .statstrip { margin-top: 16px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 14px 8px; }
 .statstrip div { display: flex; flex-direction: column; align-items: center; gap: 2px; border-right: 1px solid var(--line); }
 .statstrip div:last-child { border-right: 0; }
