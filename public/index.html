@@ -206,6 +206,9 @@ ol.rank li svg { flex: none; color: var(--muted); }
 .dlg-actions .btn { min-height: 48px; font-size: 16px; }
 .dlg-actions .btn.block { flex: 1; }
 .dangerlink { color: #D93F3F !important; }
+.pts { min-width: 48px; text-align: right; font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.pts.zero { color: var(--muted); font-weight: 600; }
+.ptsnote { font-size: 12px; color: var(--muted); text-align: right; margin-top: 6px; }
 dialog { border: 1px solid var(--line); border-radius: 22px; padding: 0; max-width: 520px; width: calc(100% - 32px); background: var(--surface); color: var(--ink); }
 dialog::backdrop { background: rgba(10,12,16,0.5); }
 dialog .inner { padding: 24px; display: flex; flex-direction: column; gap: 12px; }
@@ -334,6 +337,7 @@ function scoreOf(order, hintUsed) {
   if (hintUsed) pts = Math.max(0, pts - HINT_COST);
   return pts;
 }
+function ptsFor(rank, pos) { return pos === rank ? (rank === 0 ? 100 : 75) : Math.abs(pos - rank) === 1 ? 25 : 0; }
 function offs(order) { return order.map((a, i) => Math.min(3, Math.abs(a - i))); }
 function renderStreak() {
   const s = document.getElementById('streakPill');
@@ -602,7 +606,9 @@ function results() {
             <span class="r">${i + 1}</span>
             <div class="n"><b>${esc(a.name)}</b><span>${esc(a.display)}</span></div>
             <span class="chipr" style="${chip(Math.min(3, Math.abs(yourPos[i] - i)))}">You #${yourPos[i] + 1}</span>
+            <span class="pts${ptsFor(i, yourPos[i]) ? '' : ' zero'}" aria-label="${ptsFor(i, yourPos[i])} points">+${ptsFor(i, yourPos[i])}</span>
           </div>`).join('')}
+        <div class="ptsnote">${g.hintUsed ? `Hint: −${HINT_COST} · ` : ''}#1 right 100 · exact 75 · one off 25</div>
         <div class="actions">
           <button class="btn" id="shareBtn">Share result</button>
           ${g.kind === 'daily'
