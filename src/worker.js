@@ -59,11 +59,11 @@ function daily(n, now) {
   const rows = p.answer.map((a) => `<li><span>${esc(a.name)}</span><span>${esc(a.display)}</span></li>`).join("");
   const prev = n > 1 ? `<a href="/daily/${n - 1}/">← Daily #${n - 1}</a>` : "";
   const next = n < last ? `<a href="/daily/${n + 1}/">Daily #${n + 1} →</a>` : "";
-  const most = p.order === "asc" ? "earliest" : "most";
+  const range = p.order === "asc" ? "earliest to latest" : "most to least";
   const body = `
 <h1>Daily #${n}: “${esc(p.clue)}”</h1>
 <p class="updated">${dateFor(n)}</p>
-<p>The clue was <b>“${esc(p.clue)}”</b>. Players ranked these five from ${most} to least without seeing the stat:</p>
+<p>The clue was <b>“${esc(p.clue)}”</b>. Players ranked these five from ${range} without seeing the stat:</p>
 <p>${p.answer.map((a) => esc(a.name)).slice().sort().join(", ")}.</p>
 <h2>The answer: ${esc(p.stat)}</h2>
 <ol class="answer">${rows}</ol>
