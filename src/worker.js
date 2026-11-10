@@ -71,7 +71,7 @@ function daily(n, now) {
 <h2>Did you know?</h2>
 <p>${esc(p.fact)}</p>
 <h2>Source</h2>
-<p>${esc(p.source)}</p>
+<p>${esc(p.source)}${p.asof ? `. Numbers as of ${esc(p.asof)}.` : ""}</p>
 <p style="display:flex;justify-content:space-between;gap:12px">${prev}<span></span>${next}</p>
 <p style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><a class="btn cta" href="/">Play today&#39;s puzzle</a><a href="/daily/">All past Dailies</a></p>`;
   const desc = `Ballpark Daily #${n} (“${p.clue}”): ${p.stat}. See the full ranking, the real numbers and the source.`;
