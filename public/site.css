@@ -173,18 +173,6 @@ ol.rank li svg { flex: none; color: var(--muted); }
 .note { font-size: 13px; color: var(--muted); }
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity 200ms; }
 .toast.show { opacity: 1; }
-.movewrap { display: flex; justify-content: center; margin-top: 8px; }
-.movebtn { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
-.movebtn:hover { color: var(--accent); }
-.qrbox { align-self: center; width: max-content; background: #fff; padding: 12px; border-radius: 16px; border: 1px solid var(--line); line-height: 0; }
-.qrbox svg { width: 200px; height: 200px; display: block; }
-.copyrow { display: flex; gap: 8px; }
-.copyrow input { flex: 1; min-width: 0; height: 46px; padding: 0 12px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink-2); font: inherit; font-size: 14px; }
-.copyrow .btn { min-height: 46px; padding: 0 18px; font-size: 15px; }
-.mergelist { list-style: none; padding: 0 !important; }
-.mergelist li { display: flex; justify-content: space-between; border-bottom: 1px solid var(--line); padding: 8px 0; }
-.dlg-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; }
-.dlg-actions .btn { min-height: 46px; font-size: 15px; }
 dialog { border: 1px solid var(--line); border-radius: 22px; padding: 0; max-width: 520px; width: calc(100% - 32px); background: var(--surface); color: var(--ink); }
 dialog::backdrop { background: rgba(10,12,16,0.5); }
 dialog .inner { padding: 24px; display: flex; flex-direction: column; gap: 12px; }
