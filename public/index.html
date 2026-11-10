@@ -3,7 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ballpark</title>
+<title>Ballpark · Rank five things by a hidden stat</title>
+<meta name="description" content="Ballpark is a free daily guessing game. Rank five things by a hidden stat, from Monopoly prices to planet gravity, then see the real numbers.">
+<link rel="canonical" href="https://playballpark.xyz/">
+<meta property="og:title" content="Ballpark · Rank five things by a hidden stat">
+<meta property="og:description" content="A new puzzle every day. How close can you get?">
+<meta property="og:url" content="https://playballpark.xyz/">
+<meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M12%2010H52V36L32%2055L12%2036Z%22%20fill%3D%22%232450D6%22%20stroke%3D%22%232450D6%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3C/path%3E%3Crect%20x%3D%2220%22%20y%3D%2216%22%20width%3D%2224%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23fff%22%3E%3C/rect%3E%3Crect%20x%3D%2220%22%20y%3D%2225%22%20width%3D%2217%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23fff%22%20opacity%3D%22.8%22%3E%3C/rect%3E%3Crect%20x%3D%2220%22%20y%3D%2234%22%20width%3D%2210%22%20height%3D%225%22%20rx%3D%222.5%22%20fill%3D%22%23fff%22%20opacity%3D%22.6%22%3E%3C/rect%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -226,9 +232,9 @@ footer { padding: 24px 16px 40px; font-size: 12px; color: var(--muted); text-ali
 <main><div class="wrap" id="app"></div></main>
 <footer>
   <nav class="foot" aria-label="Site pages">
-    <a href="#how-to-play">How to play</a><a href="#about">About</a><a href="#privacy">Privacy</a><a href="#contact">Contact</a>
+    <a href="/how-to-play/">How to play</a><a href="/daily/">Past Dailies</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a>
   </nav>
-  <div>Ballpark · test version</div>
+  <div>© 2026 Ballpark</div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -322,7 +328,7 @@ function home() {
         </div>
         ${done
           ? `<div class="tile-foot"><button class="btn block" id="seeDaily">See your result · ${done.score}/400</button><span class="note">New puzzle at midnight</span></div>`
-          : `<div class="tile-foot"><button class="btn block" id="playDaily">Play today's puzzle</button><span class="note">One shot. Same puzzle for everyone.</span></div>`}
+          : `<div class="tile-foot"><button class="btn block" id="playDaily">Play today's puzzle</button><span class="note">One shot. Same puzzle for everyone. <a href="/daily/">Past puzzles</a></span></div>`}
       </article>
 
       <article class="card tile">
@@ -590,81 +596,16 @@ function fallbackCopy(text) {
 
 /* ---------- wiring ---------- */
 const how = document.getElementById('how');
-document.getElementById('howBtn').onclick = () => { location.hash = 'how-to-play'; };
+document.getElementById('howBtn').onclick = () => { location.href = '/how-to-play/'; };
 document.getElementById('howClose').onclick = () => how.close();
 document.getElementById('homeBtn').onclick = () => { if (location.hash) { location.hash = ''; } else { home(); } };
 
-/* ---------- info pages (each has its own #link) ---------- */
-const CONTACT_EMAIL = 'ballpark.contact@proton.me';
-const PAGES = {
-  'how-to-play': () => `
-    <h1>How to play</h1>
-    <p class="updated">Sort Of, the hidden-stat ranking game</p>
-    <p>You get five things: states, cities, planets, players, movies and more. They're ranked by a stat you can't see. Drag them into order from <b>most</b> (top) to <b>least</b> (bottom), then hit <b>Lock it in</b>.</p>
-    <h2>Daily</h2>
-    <p>One puzzle a day, the same for everyone. You get a clue, like <i>“Shore thing.”</i> Work out what the clue points to, then rank. You get one shot. A new Daily arrives at midnight in your time zone.</p>
-    <h2>Unlimited</h2>
-    <ul>
-      <li><b>Easy:</b> you see the stat before you rank.</li>
-      <li><b>Normal:</b> you get a clue. Stuck? Show a hint for ${HINT_COST} points and you'll see the unit it's measured in.</li>
-    </ul>
-    <p>Play <b>General</b> for a mix of everything, or pick a category like Games, Sports or Space.</p>
-    <h2>Scoring</h2>
-    <ul>
-      <li>100 points if your #1 is right.</li>
-      <li>75 points for each other item in exactly the right spot.</li>
-      <li>400 is a perfect round.</li>
-    </ul>
-    <p>Your squares show how close each guess was: green is exact, yellow is one spot off, orange is two, red is three or more.</p>
-    <h2>Moving the cards</h2>
-    <p>Drag a card up or down. You can also tap one card and then another to swap them, or use the arrow keys on a keyboard.</p>
-    <h2>Where the numbers come from</h2>
-    <p>Every stat is checked against a published source, like the U.S. Census Bureau, NASA or official league records, and the source is shown after each round. Puzzles never put two numbers so close together that a small difference between sources could change the answer.</p>`,
-  'about': () => `
-    <h1>About Ballpark</h1>
-    <p>Ballpark is a home for quick guessing games about the world. The first one is <b>Sort Of</b>: rank five things by a hidden stat and see how close you get.</p>
-    <p>The idea is that everyone has a gut sense for how things compare: which state is bigger, which movie runs longer, which planet pulls harder. Ballpark puts that gut sense to the test, then shows you the real numbers and a fact worth knowing.</p>
-    <h2>Accuracy</h2>
-    <p>Every puzzle is built from published data, and each answer screen names its source. If you think a number is wrong, please <a href="#contact">tell us</a> which puzzle it was and we'll check it.</p>
-    <h2>What's next</h2>
-    <p>More puzzles and categories are on the way, plus a new game, <b>Find It</b>: spot the bunny, the sasquatch or whoever is hiding, as fast as you can.</p>
-    <p class="note">Ballpark is an independent site and isn't affiliated with any brand, team, game, book or film mentioned in its puzzles. Names are used only to state facts about them.</p>
-    <p>Ballpark is an independent project.</p>`,
-  'privacy': () => `
-    <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: November 9, 2026</p>
-    <p>Ballpark is built to collect as little as possible. This policy explains what happens when you play.</p>
-    <h2>What we store</h2>
-    <p>We don't ask for your name, email or an account. Your scores, streak and settings are saved in your own browser on your own device (using your browser's local storage). We can't see them, and they never leave your device. Clearing your browser data deletes them.</p>
-    <h2>Site analytics</h2>
-    <p>We may use privacy-friendly analytics to count visits and see which pages are used. These numbers are totals and are not used to identify you.</p>
-    <h2>Advertising</h2>
-    <p>Ballpark may show ads from Google AdSense to help pay for the site. Third-party vendors, including Google, use cookies to serve ads based on your previous visits to this and other websites. Google's use of advertising cookies lets it and its partners serve ads based on your visits to this site and/or other sites on the internet.</p>
-    <p>You can opt out of personalized advertising in <a href="https://www.google.com/settings/ads" rel="noopener">Google Ads Settings</a>. Learn more about <a href="https://policies.google.com/technologies/ads" rel="noopener">how Google uses information from sites that use its services</a>.</p>
-    <h2>Children</h2>
-    <p>Ballpark is a general-audience site and is not directed at children under 13. We don't knowingly collect personal information from children.</p>
-    <h2>Changes</h2>
-    <p>If this policy changes, we'll update the date at the top of this page.</p>
-    <h2>Contact</h2>
-    <p>Questions about privacy? Email <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>.</p>`,
-  'contact': () => `
-    <h1>Contact</h1>
-    <p>Found a number that looks wrong, have an idea for a puzzle, or just want to say hi? We'd love to hear from you.</p>
-    <p>Email: <a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a></p>
-    <h2>Reporting a fact</h2>
-    <p>Please include the puzzle (for example, <i>Daily #12</i> or the clue), which number you think is off, and a link to your source if you have one. We check every report.</p>`
-};
+/* ---------- old #links now live at real pages ---------- */
+const OLD_PAGES = ['how-to-play', 'about', 'privacy', 'contact'];
 function route() {
   const name = location.hash.replace('#', '');
-  if (PAGES[name]) {
-    game = null;
-    app.innerHTML = `<button class="linkbtn back" id="pageBack">← Home</button><article class="card page" style="margin-top:8px">${PAGES[name]()}</article>`;
-    document.getElementById('pageBack').onclick = () => { location.hash = ''; };
-    renderStreak();
-    window.scrollTo(0, 0);
-  } else {
-    home();
-  }
+  if (OLD_PAGES.includes(name)) { location.replace('/' + name + '/'); return; }
+  home();
 }
 window.addEventListener('hashchange', route);
 route();
