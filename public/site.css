@@ -173,6 +173,23 @@ ol.rank li svg { flex: none; color: var(--muted); }
 .note { font-size: 13px; color: var(--muted); }
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity 200ms; }
 .toast.show { opacity: 1; }
+.acctbtn { width: 38px; height: 38px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: inline-grid; place-items: center; cursor: pointer; }
+.acctbtn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.syncline { display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; color: var(--muted); }
+.syncline .linkbtn { font-size: 14px; color: var(--accent); padding: 4px 2px; }
+.synced { display: inline-flex; align-items: center; gap: 6px; }
+.tabs2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--bg); border-radius: 14px; }
+.tabs2 button { min-height: 40px; border: 0; border-radius: 10px; background: transparent; color: var(--ink-2); font: inherit; font-weight: 700; cursor: pointer; }
+.tabs2 button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.field input { height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; }
+.field input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.formerr { color: #D93F3F; font-size: 14px; min-height: 0; margin: 0; }
+.dlg-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; }
+.dlg-actions .btn { min-height: 48px; font-size: 16px; }
+.dlg-actions .btn.block { flex: 1; }
+.dangerlink { color: #D93F3F !important; }
 dialog { border: 1px solid var(--line); border-radius: 22px; padding: 0; max-width: 520px; width: calc(100% - 32px); background: var(--surface); color: var(--ink); }
 dialog::backdrop { background: rgba(10,12,16,0.5); }
 dialog .inner { padding: 24px; display: flex; flex-direction: column; gap: 12px; }

@@ -3,6 +3,7 @@
 // (UTC-12 midnight), so the archive never spoils a puzzle someone can still play.
 import puzzles from "./puzzles.json";
 import shell from "./shell.json";
+import { handleApi } from "./auth.js";
 
 const SITE = "https://playballpark.xyz";
 const LAUNCH_UTC = Date.UTC(2026, 10, 9); // Daily #1 = Nov 9, 2026
@@ -85,7 +86,7 @@ function sitemap(now) {
 }
 
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const url = new URL(request.url);
     const now = Date.now();
     let path = url.pathname;
@@ -93,6 +94,7 @@ export default {
       url.hostname = url.hostname.slice(4);
       return Response.redirect(url.toString(), 301);
     }
+    if (path.startsWith("/api/")) return handleApi(request, env, path);
     if (path === "/sitemap.xml") return sitemap(now);
     if (path === "/daily") return Response.redirect(`${url.origin}/daily/`, 301);
     if (path === "/daily/") return archive(now);
