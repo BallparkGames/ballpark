@@ -21,13 +21,30 @@ function dateFor(n) {
     month: "long", day: "numeric", year: "numeric", timeZone: "UTC",
   });
 }
-const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+// Security headers for every response the worker makes (static files get the same set from public/_headers).
+const SECURITY_HEADERS = {
+  "strict-transport-security": "max-age=31536000; includeSubDomains",
+  "x-content-type-options": "nosniff",
+  "x-frame-options": "SAMEORIGIN",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  "permissions-policy": "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+  "content-security-policy": "frame-ancestors 'self'; base-uri 'self'; object-src 'none'; form-action 'self'",
+  "cross-origin-opener-policy": "same-origin-allow-popups",
+};
+function secure(res) {
+  const out = new Response(res.body, res);
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) out.headers.set(k, v);
+  return out;
+}
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
 function page(title, desc, path, body, status = 200) {
+  // function replacements so "$" in any value is never treated as a special pattern
   const html = shell.head
-    .replace("{{TITLE}}", esc(title))
-    .replace("{{DESC}}", esc(desc))
-    .replace("{{PATH}}", path) + body + shell.foot;
+    .replace("{{TITLE}}", () => esc(title))
+    .replace("{{DESC}}", () => esc(desc))
+    .replace("{{PATH}}", () => esc(path)) + body + shell.foot;
   return new Response(html, {
     status,
     headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=600" },
@@ -52,7 +69,7 @@ ${last >= 1 ? `<ul class="archive">${items}</ul>` : `<p>The first Daily is still
 
 function daily(n, now) {
   const last = latestFinished(now);
-  if (n > last) {
+  if (!Number.isSafeInteger(n) || n < 1 || n > last) {
     return page("Not out yet · Ballpark", "This Daily hasn't finished yet.", `/daily/${n}/`,
       `<h1>Daily #${n} isn't finished yet</h1><p>Answers appear here once the day is over everywhere, so nobody gets spoiled.</p><p><a class="btn cta" href="/">Play today's puzzle</a></p>`, 404);
   }
@@ -87,6 +104,16 @@ function sitemap(now) {
 
 export default {
   async fetch(request, env) {
+    try {
+      return secure(await route(request, env));
+    } catch (err) {
+      return secure(new Response("Something went wrong.", { status: 500, headers: { "content-type": "text/plain; charset=utf-8" } }));
+    }
+  },
+};
+
+async function route(request, env) {
+  {
     const url = new URL(request.url);
     const now = Date.now();
     let path = url.pathname;
@@ -105,5 +132,5 @@ export default {
     }
     return page("Page not found · Ballpark", "This page doesn't exist.", path,
       `<h1>Page not found</h1><p>That page doesn't exist, but today's puzzle does.</p><p><a class="btn cta" href="/">Play today's puzzle</a></p>`, 404);
-  },
-};
+  }
+}

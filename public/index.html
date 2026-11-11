@@ -265,7 +265,7 @@ footer { padding: 24px 16px 40px; font-size: 12px; color: var(--muted); text-ali
 <main><div class="wrap" id="app"></div></main>
 <footer>
   <nav class="foot" aria-label="Site pages">
-    <a href="/how-to-play/">How to play</a><a href="/daily/">Past Dailies</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/contact/">Contact</a>
+    <a href="/how-to-play/">How to play</a><a href="/daily/">Past Dailies</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a>
   </nav>
   <div>© 2026 Ballpark</div>
 </footer>
@@ -760,6 +760,7 @@ function openAccount(tab) {
         <div class="field"><label for="acPw">Password${mode === 'signup' ? ' (8+ characters)' : ''}</label><input id="acPw" type="password" autocomplete="${mode === 'signup' ? 'new-password' : 'current-password'}" required></div>
         <p class="formerr" id="acErr" role="alert"></p>
         <div class="dlg-actions"><button type="button" class="btn ghost" id="acCancel">Not now</button><button type="submit" class="btn block" id="acGo">${mode === 'signup' ? 'Create account' : 'Sign in'}</button></div>
+        ${mode === 'signup' ? `<p class="note">By creating an account, you confirm you're 13 or older and agree to the <a href="/terms/" target="_blank" rel="noopener">Terms</a> and <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>.</p>` : ''}
         ${mode === 'signin' ? `<p class="note">Forgot your password? Email <a href="mailto:ballpark.contact@proton.me">ballpark.contact@proton.me</a> from your account's address and we'll help.</p>` : ''}
       </form>`;
     document.getElementById('tabUp').onclick = () => openAccount('signup');

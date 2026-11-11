@@ -8,6 +8,7 @@
 //   hash is stored, so a database leak can't be used to log in.
 // - Writes require a same-origin request with a JSON body (blocks cross-site form posts).
 // - Repeated wrong passwords lock that account's sign-in for 15 minutes.
+// - Per-network rate limits on sign-up, sign-in and delete (IP addresses are hashed, never stored raw).
 
 const ITERATIONS = 50000;
 const SESSION_DAYS = 365;
@@ -46,9 +47,27 @@ async function ensureSchema(db) {
     db.prepare(`CREATE TABLE IF NOT EXISTS sessions (
       token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL, expires INTEGER NOT NULL)`),
     db.prepare(`CREATE INDEX IF NOT EXISTS sessions_user ON sessions(user_id)`),
+    db.prepare(`CREATE TABLE IF NOT EXISTS rate_limits (
+      key TEXT PRIMARY KEY, count INTEGER NOT NULL, reset INTEGER NOT NULL)`),
   ]);
   schemaReady = true;
 }
+
+// Returns false once a network has made more than `limit` attempts of one kind in the window.
+async function allow(db, request, action, limit, windowMs) {
+  const ip = request.headers.get("cf-connecting-ip") || "local";
+  const key = action + ":" + (await sha256("ballpark-rl:" + ip)).slice(0, 32);
+  const now = Date.now();
+  const row = await db.prepare("SELECT count, reset FROM rate_limits WHERE key = ?").bind(key).first();
+  if (!row || row.reset <= now) {
+    await db.prepare("INSERT OR REPLACE INTO rate_limits (key, count, reset) VALUES (?, 1, ?)").bind(key, now + windowMs).run();
+    return true;
+  }
+  if (row.count >= limit) return false;
+  await db.prepare("UPDATE rate_limits SET count = count + 1 WHERE key = ?").bind(key).run();
+  return true;
+}
+const SLOW_DOWN = "Too many tries from your network. Wait a bit and try again.";
 
 const json = (obj, status = 200, headers = {}) =>
   new Response(JSON.stringify(obj), { status, headers: { "content-type": "application/json", "cache-control": "no-store", ...headers } });
@@ -110,20 +129,24 @@ function mergeData(stored, incoming) {
 }
 
 async function readBody(request) {
-  if (!(request.headers.get("content-type") || "").includes("application/json")) return null;
+  const type = (request.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+  if (type !== "application/json") return null;
   const text = await request.text();
   if (text.length > MAX_BODY) return null;
   try { return JSON.parse(text); } catch { return null; }
 }
-const validEmail = (e) => typeof e === "string" && e.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+const validEmail = (e) => typeof e === "string" && e.length <= 254 && /^[^\s@<>"`(),;:\\[\]]+@[a-z0-9-]+(\.[a-z0-9-]+)*\.[a-z]{2,}$/i.test(e);
 const validPassword = (p) => typeof p === "string" && p.length >= 8 && p.length <= 200;
 
 export async function handleApi(request, env, path) {
   const db = env.DB;
   if (!db) return fail(503, "Accounts aren't set up yet.");
   if (request.method !== "GET") {
+    // Writes must come from this site's own pages (blocks other sites from acting as a signed-in player).
     const origin = request.headers.get("origin");
-    if (origin && new URL(origin).host !== new URL(request.url).host) return fail(403, "Bad origin.");
+    let ok = false;
+    try { ok = !!origin && new URL(origin).host === new URL(request.url).host; } catch { ok = false; }
+    if (!ok || request.headers.get("sec-fetch-site") === "cross-site") return fail(403, "Bad origin.");
   }
   await ensureSchema(db);
   const now = Date.now();
@@ -135,6 +158,7 @@ export async function handleApi(request, env, path) {
   }
 
   if (path === "/api/signup" && request.method === "POST") {
+    if (!(await allow(db, request, "signup", 30, 3600000))) return fail(429, SLOW_DOWN);
     const body = await readBody(request);
     if (!body) return fail(400, "Something went wrong. Try again.");
     const email = String(body.email || "").trim().toLowerCase();
@@ -152,10 +176,12 @@ export async function handleApi(request, env, path) {
   }
 
   if (path === "/api/login" && request.method === "POST") {
+    if (!(await allow(db, request, "login", 60, 600000))) return fail(429, SLOW_DOWN);
     const body = await readBody(request);
     if (!body) return fail(400, "Something went wrong. Try again.");
     const email = String(body.email || "").trim().toLowerCase();
-    const user = validEmail(email) ? await db.prepare("SELECT * FROM users WHERE email = ?").bind(email).first() : null;
+    if (typeof body.password !== "string" || body.password.length > 200) return fail(401, "That email and password don't match.");
+    const user = email.length <= 254 && email.includes("@") ? await db.prepare("SELECT * FROM users WHERE email = ?").bind(email).first() : null;
     if (!user) {
       // spend similar time so response speed doesn't reveal which emails have accounts
       await hashPassword(String(body.password || ""), "00".repeat(16), ITERATIONS);
@@ -174,10 +200,13 @@ export async function handleApi(request, env, path) {
     if (user.iters < ITERATIONS) {
       const salt = randomHex(16);
       upd = db.prepare("UPDATE users SET fails = 0, locked_until = 0, data = ?, updated = ?, pw_salt = ?, pw_hash = ?, iters = ? WHERE id = ?")
-        .bind(JSON.stringify(data), now, salt, await hashPassword(body.password, salt, ITERATIONS), ITERATIONS, user.id);
+        .bind(JSON.stringify(data), now, salt, await hashPassword(String(body.password || ""), salt, ITERATIONS), ITERATIONS, user.id);
     }
     await upd.run();
-    await db.prepare("DELETE FROM sessions WHERE user_id = ? AND expires < ?").bind(user.id, now).run();
+    await db.batch([
+      db.prepare("DELETE FROM sessions WHERE expires < ?").bind(now),
+      db.prepare("DELETE FROM rate_limits WHERE reset < ?").bind(now),
+    ]);
     return json({ ok: true, user: { email: user.email }, data }, 200, { "set-cookie": await newSession(db, user.id) });
   }
 
@@ -200,6 +229,7 @@ export async function handleApi(request, env, path) {
   if (path === "/api/delete" && request.method === "POST") {
     const user = await currentUser(db, request);
     if (!user) return fail(401, "Signed out.");
+    if (!(await allow(db, request, "delete", 20, 3600000))) return fail(429, SLOW_DOWN);
     const body = await readBody(request);
     const full = await db.prepare("SELECT pw_hash, pw_salt, iters FROM users WHERE id = ?").bind(user.id).first();
     const hash = await hashPassword(String((body && body.password) || ""), full.pw_salt, full.iters);
