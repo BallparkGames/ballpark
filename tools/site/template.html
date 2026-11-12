@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ballpark · Rank five things by a hidden stat</title>
+<meta name="description" content="Ballpark is a free daily guessing game. Rank five things by a hidden stat, from Monopoly prices to planet gravity, then see the real numbers.">
+<link rel="canonical" href="https://playballpark.xyz/">
+<meta property="og:title" content="Ballpark · Rank five things by a hidden stat">
+<meta property="og:description" content="A new puzzle every day. How close can you get?">
+<meta property="og:url" content="https://playballpark.xyz/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballpark">
+<meta property="og:image" content="https://playballpark.xyz/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Ballpark: rank 5 things by a hidden stat">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Ballpark · Rank five things by a hidden stat">
+<meta name="twitter:description" content="A new puzzle every day. How close can you get?">
+<meta name="twitter:image" content="https://playballpark.xyz/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cpath%20d%3D%22M12%2010H52V36L32%2055L12%2036Z%22%20fill%3D%22%232450D6%22%20stroke%3D%22%232450D6%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22%3E%3C/path%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2230%22%20r%3D%2212.5%22%20fill%3D%22%23fff%22%3E%3C/circle%3E%3Cpath%20d%3D%22M25.2%2023.2Q29%2030%2025.2%2036.8%22%20stroke%3D%22%232450D6%22%20stroke-width%3D%222.2%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%3E%3C/path%3E%3Cpath%20d%3D%22M38.8%2023.2Q35%2030%2038.8%2036.8%22%20stroke%3D%22%232450D6%22%20stroke-width%3D%222.2%22%20fill%3D%22none%22%20stroke-linecap%3D%22round%22%3E%3C/path%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Ballpark: crisp light ground, one stadium-seat blue, cards you can pick up.
+   Layout: one centered column on phones; on desktop the game splits into clue | cards. */
+:root {
+  --bg: #F6F7F9;
+  --surface: #FFFFFF;
+  --ink: #14161B;
+  --ink-2: #3A3F4B;
+  --muted: #5B6170;
+  --line: #E3E6EC;
+  --chip: #F0F2F6;
+  --accent: #2450D6;
+  --accent-ink: #FFFFFF;
+  --exact: #17804A;
+  --off1: #F2C230;
+  --off2: #F08A3C;
+  --off3: #C93A34;
+  --shadow: 0 10px 30px rgba(20,22,27,0.07);
+  --lift: 0 16px 34px rgba(20,22,27,0.18);
+  --display: 'Bricolage Grotesque', 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1115; --surface: #171A21; --ink: #F2F4F8; --ink-2: #C9CED8; --muted: #9AA1B0;
+    --line: #2A2F3A; --chip: #222733; --accent: #5B82F0; --accent-ink: #0B0E14;
+    --shadow: 0 10px 30px rgba(0,0,0,0.35); --lift: 0 16px 34px rgba(0,0,0,0.55);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1115; --surface: #171A21; --ink: #F2F4F8; --ink-2: #C9CED8; --muted: #9AA1B0;
+  --line: #2A2F3A; --chip: #222733; --accent: #5B82F0; --accent-ink: #0B0E14;
+  --shadow: 0 10px 30px rgba(0,0,0,0.35); --lift: 0 16px 34px rgba(0,0,0,0.55);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); }
+body { min-height: 100vh; }
+button, a { font-family: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3 { text-wrap: balance; }
+.wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+header.top { background: var(--surface); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 14px; padding-bottom: 14px; }
+.logo { display: flex; align-items: center; gap: 10px; background: none; border: 0; color: var(--ink); cursor: pointer; padding: 0; }
+.logo span { font-family: var(--display); font-weight: 800; font-size: 24px; letter-spacing: -0.5px; }
+.pill { white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; background: var(--surface); color: var(--ink); }
+.linkbtn { white-space: nowrap; background: none; border: 0; color: var(--ink); font-weight: 700; font-size: 14px; cursor: pointer; padding: 8px; }
+main { padding: 24px 0 64px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; }
+.hero { padding: 24px; box-shadow: var(--shadow); display: flex; flex-wrap: wrap; gap: 28px; }
+.hero > div { flex: 1 1 300px; display: flex; flex-direction: column; gap: 14px; }
+.eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; color: var(--muted); text-transform: uppercase; }
+.clue { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(40px, 7vw, 68px); line-height: 1; letter-spacing: -1.5px; }
+.lede { margin: 0; font-size: 16px; line-height: 1.5; color: var(--ink-2); max-width: 46ch; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 52px; padding: 0 26px; border-radius: 14px; border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 17px; cursor: pointer; text-decoration: none; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.btn.outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn.block { width: 100%; }
+.preview { display: flex; flex-direction: column; gap: 8px; }
+.preview div { height: 48px; border: 1px solid var(--line); border-radius: 12px; display: flex; align-items: center; padding: 0 16px; font-weight: 700; background: var(--bg); }
+.section { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+.section-head h2 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 26px; }
+.section-head span { font-size: 14px; color: var(--muted); }
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.mode { padding: 18px; display: flex; flex-direction: column; gap: 6px; text-align: left; cursor: pointer; color: var(--ink); }
+.mode:hover { border-color: var(--accent); }
+.mode b { font-family: var(--display); font-weight: 800; font-size: 22px; }
+.mode span { font-size: 13px; line-height: 1.4; color: var(--muted); }
+.intro { margin: 8px 0 22px; }
+.intro h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(30px, 5vw, 44px); line-height: 1.05; letter-spacing: -1px; }
+.intro p { margin: 6px 0 0; font-size: 17px; color: var(--ink-2); }
+.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.tile { padding: 24px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow); min-height: 300px; }
+.tile-body { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.tile .clue { font-size: clamp(38px, 5.5vw, 56px); }
+.tile-title { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(28px, 4vw, 38px); line-height: 1.05; }
+.tile-foot { display: flex; flex-direction: column; gap: 8px; }
+.tile-daily { border: 2px solid var(--accent); }
+.archive-card { margin-top: 16px; display: flex; align-items: center; gap: 20px; padding: 20px 24px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow); transition: transform .15s ease, border-color .15s ease; }
+.archive-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+.archive-card .stack { position: relative; width: 74px; height: 64px; flex: none; }
+.archive-card .stack span { position: absolute; width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 14px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); }
+.archive-card .stack span:nth-child(1) { left: 0; top: 12px; transform: rotate(-8deg); background: var(--bg); }
+.archive-card .stack span:nth-child(2) { left: 11px; top: 6px; transform: rotate(-3deg); color: var(--ink-2); }
+.archive-card .stack span:nth-child(3) { left: 22px; top: 0; background: var(--accent); border-color: var(--accent); color: #fff; font-size: 15px; }
+.archive-text { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.archive-text b { font-family: var(--display); font-weight: 800; font-size: 22px; }
+.archive-text span { color: var(--ink-2); font-size: 15px; line-height: 1.45; }
+.archive-go { flex: none; white-space: nowrap; }
+@media (max-width: 640px) { .archive-card { flex-wrap: wrap; padding: 20px; } .archive-go { width: 100%; justify-content: center; } }
+.statstrip { margin-top: 16px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); padding: 14px 8px; }
+.statstrip div { display: flex; flex-direction: column; align-items: center; gap: 2px; border-right: 1px solid var(--line); }
+.statstrip div:last-child { border-right: 0; }
+.statstrip b { font-family: var(--display); font-weight: 800; font-size: 26px; font-variant-numeric: tabular-nums; }
+.statstrip span { font-size: 12px; color: var(--muted); }
+.back { padding: 8px 0; margin-top: 4px; }
+@media (max-width: 760px) { .tiles { grid-template-columns: minmax(0, 1fr); } .tile { min-height: 0; } }
+.picker { padding: 20px; display: flex; flex-direction: column; gap: 18px; box-shadow: var(--shadow); }
+.picker-row { display: flex; flex-direction: column; gap: 10px; }
+.picker-label { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; color: var(--muted); }
+.seg { display: inline-grid; grid-template-columns: repeat(2, minmax(0, 1fr)); background: var(--chip); border-radius: 14px; padding: 4px; gap: 4px; max-width: 420px; width: 100%; }
+.seg button { min-height: 52px; border: 0; border-radius: 11px; background: transparent; color: var(--ink); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 6px; }
+.seg button b { font-family: var(--display); font-weight: 800; font-size: 18px; }
+.seg button span { font-size: 12px; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--surface); box-shadow: 0 2px 8px rgba(20,22,27,0.12); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); color: var(--ink); font-weight: 700; font-size: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.chips button small { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chips button:hover { border-color: var(--accent); }
+.chips button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chips button[aria-pressed="true"] small { color: var(--accent-ink); opacity: 0.85; }
+.picker-go { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.stat { padding: 16px; }
+.stat b { display: block; font-family: var(--display); font-weight: 800; font-size: 30px; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 12px; color: var(--muted); }
+.soon { padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
+.soon div { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.soon b { font-family: var(--display); font-weight: 800; font-size: 20px; }
+.soon span { font-size: 13px; color: var(--ink-2); }
+.tag { font-size: 11px; font-weight: 700; letter-spacing: 0.4px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+.tag.accent { color: var(--accent); border-color: var(--accent); }
+
+/* Game */
+.game { padding: 24px; box-shadow: var(--shadow); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "left right" "lock right"; column-gap: 32px; row-gap: 20px; }
+.game .left { grid-area: left; display: flex; flex-direction: column; gap: 14px; }
+.game .right { grid-area: right; display: flex; flex-direction: column; gap: 10px; }
+.game .lock { grid-area: lock; align-self: end; }
+@media (max-width: 760px) { .game { grid-template-columns: minmax(0, 1fr); grid-template-areas: "left" "right" "lock"; } }
+.statline { font-family: var(--display); font-weight: 800; font-size: clamp(28px, 4.5vw, 40px); line-height: 1.05; margin: 0; }
+.hint { font-size: 15px; color: var(--ink); background: var(--chip); border-radius: 12px; padding: 12px 14px; }
+.ends { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; color: var(--muted); }
+ol.rank { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+ol.rank li { position: relative; display: flex; align-items: center; gap: 14px; min-height: 62px; padding: 8px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease; }
+ol.rank li.dragging { cursor: grabbing; z-index: 5; box-shadow: var(--lift); border: 2px solid var(--accent); transition: box-shadow 160ms ease; }
+ol.rank li.selected { border: 2px solid var(--accent); }
+ol.rank li .num { width: 34px; height: 34px; flex: none; border-radius: 10px; background: var(--chip); display: flex; align-items: center; justify-content: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+ol.rank li .name { flex: 1; font-weight: 700; font-size: 18px; line-height: 1.2; }
+ol.rank li svg { flex: none; color: var(--muted); }
+.tip { font-size: 13px; color: var(--muted); }
+
+/* Results */
+.results { padding: 24px; box-shadow: var(--shadow); display: flex; flex-wrap: wrap; gap: 32px; }
+.results .left { flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px; }
+.results .right { flex: 1 1 340px; display: flex; flex-direction: column; }
+.score { display: flex; align-items: baseline; gap: 6px; }
+.score b { font-family: var(--display); font-weight: 800; font-size: clamp(72px, 12vw, 112px); line-height: 0.85; letter-spacing: -3px; font-variant-numeric: tabular-nums; }
+.score span { font-size: 22px; font-weight: 700; color: var(--muted); }
+.squares { display: flex; gap: 6px; }
+.squares i { width: 26px; height: 26px; border-radius: 7px; display: block; }
+.reveal { background: var(--accent); color: var(--accent-ink); border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; }
+.reveal small { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; opacity: 0.85; }
+.reveal b { font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1.1; }
+.reveal span { font-size: 13px; opacity: 0.9; }
+.dyk { border: 1.5px dashed var(--line); border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.dyk small { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; color: var(--accent); }
+.dyk p { margin: 0; font-size: 15px; line-height: 1.45; color: var(--ink); }
+.row { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); opacity: 0; transform: translateY(6px); animation: rowIn 380ms ease forwards; }
+.row:last-child { border-bottom: 0; }
+.row .r { width: 22px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.row .n { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.row .n b { font-size: 17px; }
+.row .n span { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chipr { font-size: 12px; font-weight: 700; padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+@keyframes rowIn { to { opacity: 1; transform: none; } }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.actions .btn { flex: 1 1 150px; }
+.note { font-size: 13px; color: var(--muted); }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity 200ms; }
+.toast.show { opacity: 1; }
+.acctbtn { width: 38px; height: 38px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: inline-grid; place-items: center; cursor: pointer; }
+.acctbtn.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.syncline { display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 10px; font-size: 14px; color: var(--muted); }
+.syncline .linkbtn { font-size: 14px; color: var(--accent); padding: 4px 2px; }
+.synced { display: inline-flex; align-items: center; gap: 6px; }
+.tabs2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; background: var(--bg); border-radius: 14px; }
+.tabs2 button { min-height: 40px; border: 0; border-radius: 10px; background: transparent; color: var(--ink-2); font: inherit; font-weight: 700; cursor: pointer; }
+.tabs2 button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.field input { height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; font-size: 16px; }
+.field input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.formerr { color: #D93F3F; font-size: 14px; min-height: 0; margin: 0; }
+.dlg-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; }
+.dlg-actions .btn { min-height: 48px; font-size: 16px; }
+.dlg-actions .btn.block { flex: 1; }
+.dangerlink { color: #D93F3F !important; }
+.pts { min-width: 48px; text-align: right; font-family: var(--display); font-weight: 800; font-size: 17px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.pts.zero { color: var(--muted); font-weight: 600; }
+.ptsnote { font-size: 12px; color: var(--muted); text-align: right; margin-top: 6px; }
+dialog { border: 1px solid var(--line); border-radius: 22px; padding: 0; max-width: 520px; width: calc(100% - 32px); background: var(--surface); color: var(--ink); }
+dialog::backdrop { background: rgba(10,12,16,0.5); }
+dialog .inner { padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+dialog h2 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 28px; }
+dialog p, dialog li { margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+dialog ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+footer { padding: 24px 16px 40px; font-size: 12px; color: var(--muted); text-align: center; display: flex; flex-direction: column; gap: 10px; }
+.foot { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 18px; }
+.foot a { color: var(--ink-2); font-size: 14px; font-weight: 700; text-decoration: none; padding: 6px 2px; }
+.foot a:hover { color: var(--accent); }
+.page { max-width: 68ch; padding: 28px; box-shadow: var(--shadow); }
+.page h1 { margin: 0 0 6px; font-family: var(--display); font-weight: 800; font-size: clamp(32px, 5vw, 44px); line-height: 1.05; }
+.page h2 { margin: 26px 0 8px; font-family: var(--display); font-weight: 800; font-size: 22px; }
+.page p, .page li { font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+.page p { margin: 0 0 12px; }
+.page ul { margin: 0 0 12px; padding-left: 20px; }
+.page a { color: var(--accent); }
+.page .updated { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+.ph { background: var(--chip); border-radius: 6px; padding: 1px 6px; font-weight: 700; color: var(--ink); }
+@media (max-width: 560px) {
+  .picker { padding: 16px; }
+  .chips button { min-height: 40px; padding: 0 13px; font-size: 14px; }
+  .picker-go .btn { width: 100%; }
+  .wide { display: none; }
+  .logo span { font-size: 22px; }
+  .hero, .game, .results { padding: 18px; border-radius: 18px; }
+  .modes { gap: 8px; }
+  .mode { padding: 14px 12px; }
+  .mode b { font-size: 19px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main { padding-top: 16px; }
+  .game { gap: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .row { animation: none; opacity: 1; transform: none; }
+  ol.rank li { transition: none; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <button class="logo" id="homeBtn" aria-label="Ballpark home">
+      <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><path d="M12 10H52V36L32 55L12 36Z" fill="var(--accent)" stroke="var(--accent)" stroke-width="6" stroke-linejoin="round"></path><circle cx="32" cy="30" r="12.5" fill="#fff"></circle><path d="M25.2 23.2Q29 30 25.2 36.8" stroke="var(--accent)" stroke-width="2.2" fill="none" stroke-linecap="round"></path><path d="M38.8 23.2Q35 30 38.8 36.8" stroke="var(--accent)" stroke-width="2.2" fill="none" stroke-linecap="round"></path></svg>
+      <span>Ballpark</span>
+    </button>
+    <div style="display:flex;align-items:center;gap:6px">
+      <button class="linkbtn" id="howBtn">How to play</button>
+      <span class="pill" id="streakPill"></span>
+      <button class="acctbtn" id="acctBtn" aria-label="Account"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></button>
+    </div>
+  </div>
+</header>
+<main><div class="wrap" id="app"></div></main>
+<footer>
+  <nav class="foot" aria-label="Site pages">
+    <a href="/how-to-play/">How to play</a><a href="/daily/">Past Dailies</a><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="/contact/">Contact</a>
+  </nav>
+  <div>© 2026 Ballpark</div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<dialog id="how">
+  <div class="inner">
+    <h2>How to play Batting Order</h2>
+    <p>You get five things. They're ranked by a hidden stat. Drag them into order from most (top) to least (bottom), then lock it in.</p>
+    <ul>
+      <li><b>Daily:</b> one puzzle a day, same for everyone. You get a clue.</li>
+      <li><b>Easy:</b> you see the stat before you rank.</li>
+      <li><b>Normal:</b> you get a clue. You can show a hint for 25 points.</li>
+    </ul>
+    <p><b>Scoring:</b> 100 points if your #1 is right, 75 for each other spot you get exactly right, and 25 for anything just one spot off. 400 is perfect.</p>
+    <p>Can't drag? Tap one card, then another, to swap them. On a keyboard, use the arrow keys on a card.</p>
+    <button class="btn" id="howClose">Got it</button>
+  </div>
+</dialog>
+
+<dialog id="acct">
+  <div class="inner" id="acctInner"></div>
+</dialog>
+
+
+<script>
+const DATA = /*PUZZLES*/null;
+const LAUNCH = new Date(2026, 10, 9); // Daily #1 = Nov 9, 2026 (local time)
+const HINT_COST = 25;
+const MODE_INFO = {
+  easy: { name: 'Easy', desc: 'You see the stat' },
+  normal: { name: 'Normal', desc: 'You get a clue' }
+};
+const SQ = ['var(--exact)', 'var(--off1)', 'var(--off2)', 'var(--off3)'];
+const EMOJI = ['🟩', '🟨', '🟧', '🟥'];
+const app = document.getElementById('app');
+
+/* ---------- storage (one viewer, best effort) ---------- */
+const KEY = 'ballpark-v1';
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { return {}; }
+}
+let store = Object.assign({ played: 0, total: 0, best: 0, perfect: 0, streak: 0, lastDaily: null, daily: {}, seen: { easy: [], normal: [] }, pref: { mode: 'normal', cat: 'general' } }, load());
+function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+if (!store.pref || !['easy', 'normal'].includes(store.pref.mode)) store.pref = { mode: 'normal', cat: 'general' };
+if (store.pref.cat !== 'general' && !DATA.categories.some(c => c.id === store.pref.cat)) store.pref.cat = 'general';
+if (store.bank !== 4) { store.seen = { easy: [], normal: [] }; store.bank = 4; save(); }
+
+/* ---------- dates ---------- */
+function dayKey(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function today() { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function dailyNumber() { return Math.max(1, Math.round((today() - LAUNCH) / 86400000) + 1); }
+function dailyPuzzle() { const n = dailyNumber(); return DATA.daily[(n - 1) % DATA.daily.length]; }
+
+/* ---------- helpers ---------- */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function shuffledOrder(n) {
+  let o;
+  do { o = [...Array(n).keys()].sort(() => Math.random() - 0.5); } while (o.every((v, i) => v === i));
+  return o;
+}
+function toast(msg) {
+  const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 1800);
+}
+function scoreOf(order, hintUsed) {
+  let pts = 0;
+  order.forEach((a, i) => { if (a === i) pts += i === 0 ? 100 : 75; else if (Math.abs(a - i) === 1) pts += 25; });
+  if (hintUsed) pts = Math.max(0, pts - HINT_COST);
+  return pts;
+}
+function ptsFor(rank, pos) { return pos === rank ? (rank === 0 ? 100 : 75) : Math.abs(pos - rank) === 1 ? 25 : 0; }
+function offs(order) { return order.map((a, i) => Math.min(3, Math.abs(a - i))); }
+function renderStreak() {
+  const s = document.getElementById('streakPill');
+  s.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-3 2-4 2-7 2 1 3 3 3 5"></path></svg><span>' + store.streak + '<span class="wide">-day streak</span></span>';
+  s.setAttribute('aria-label', store.streak + '-day streak');
+}
+
+/* ---------- views ---------- */
+let game = null;
+
+function home() {
+  game = null;
+  const p = dailyPuzzle(); const n = dailyNumber(); const done = store.daily[dayKey(today())];
+  const T = totals(); const avg = T.played ? Math.round(T.total / T.played) : 0;
+  app.innerHTML = `
+    <section class="intro">
+      <h1>Rank five things by a hidden stat.</h1>
+      <p>How close can you get?</p>
+    </section>
+
+    <section class="tiles">
+      <article class="card tile tile-daily">
+        <span class="eyebrow">Daily · #${n}</span>
+        <div class="tile-body">
+          <span class="note">Today's clue</span>
+          <h2 class="clue">“${esc(p.clue)}”</h2>
+        </div>
+        ${done
+          ? `<div class="tile-foot"><button class="btn block" id="seeDaily">See your result · ${done.score}/400</button><span class="note">New puzzle at midnight</span></div>`
+          : `<div class="tile-foot"><button class="btn block" id="playDaily">Play today's puzzle</button><span class="note">One shot. Same puzzle for everyone.</span></div>`}
+      </article>
+
+      <article class="card tile">
+        <span class="eyebrow">Unlimited</span>
+        <div class="tile-body">
+          <h2 class="tile-title">Play as many as you want.</h2>
+          <p class="lede">Pick Easy or Normal, then stick to one category or mix them all.</p>
+        </div>
+        <div class="tile-foot"><button class="btn outline block" id="goUnl">Play Unlimited</button><span class="note">Starts on: ${esc(MODE_INFO[store.pref.mode].name)} · ${esc(catName(store.pref.cat))}</span></div>
+      </article>
+    </section>
+
+    <section class="card statstrip" aria-label="Your stats, saved on this device">
+      <div><b>${T.played}</b><span>Played</span></div>
+      <div><b>${avg}</b><span>Avg score</span></div>
+      <div><b>${T.best}</b><span>Best</span></div>
+      <div><b>${store.streak}</b><span>Day streak</span></div>
+    </section>
+
+    <div class="syncline">${account
+      ? `<span class="synced"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Synced to ${esc(account.email)}</span>`
+      : `<span>Play on more than one device?</span><button class="linkbtn" id="syncCta">Sign in to sync your stats</button>`}</div>
+
+    <a class="card archive-card" href="/daily/">
+      <div class="stack" aria-hidden="true"><span>${n > 3 ? '#' + (n - 3) : ''}</span><span>${n > 2 ? '#' + (n - 2) : ''}</span><span>#${Math.max(1, n - 1)}</span></div>
+      <div class="archive-text"><b>Past Dailies</b><span>Missed a day? See every answer, the real numbers and where they come from.</span></div>
+      <span class="btn outline archive-go">Browse the archive<span aria-hidden="true" style="margin-left:8px">→</span></span>
+    </a>
+
+    <section class="card soon" style="margin-top:16px"><div><b>Find It</b><span>Spot the bunny, the sasquatch, or whoever is hiding. Fastest time wins.</span></div><span class="tag">COMING SOON</span></section>`;
+  const pd = document.getElementById('playDaily'); if (pd) pd.onclick = () => start('daily', 'normal', p);
+  const sd = document.getElementById('seeDaily'); if (sd) sd.onclick = () => { game = { kind: 'daily', mode: 'normal', puzzle: p, order: done.order, hintUsed: done.hint, saved: true }; results(); };
+  document.getElementById('goUnl').onclick = unlimitedView;
+  const sc = document.getElementById('syncCta'); if (sc) sc.onclick = () => openAccount('signup');
+  renderStreak();
+  window.scrollTo(0, 0);
+}
+
+function unlimitedView() {
+  game = null;
+  app.innerHTML = `
+    <button class="linkbtn back" id="unlBack">← Home</button>
+    <section class="intro" style="margin-top:4px">
+      <h1>Unlimited</h1>
+      <p>Choose how much help you want and what to play.</p>
+    </section>
+    <div class="card picker" id="picker"></div>`;
+  document.getElementById('unlBack').onclick = home;
+  drawPicker();
+  window.scrollTo(0, 0);
+}
+
+const CATS = [{ id: 'general', name: 'General' }].concat(DATA.categories);
+function catName(id) { return (CATS.find(c => c.id === id) || CATS[0]).name; }
+function bankFor(mode, cat) { return DATA.unlimited[mode].filter(p => cat === 'general' || p.category === cat); }
+
+function drawPicker() {
+  const el = document.getElementById('picker'); if (!el) return;
+  const pref = store.pref;
+  el.innerHTML = `
+    <div class="picker-row">
+      <span class="picker-label" id="modeLabel">MODE</span>
+      <div class="seg" role="group" aria-labelledby="modeLabel">
+        ${Object.entries(MODE_INFO).map(([k, m]) => `<button data-mode="${k}" aria-pressed="${pref.mode === k}"><b>${m.name}</b><span>${m.desc}</span></button>`).join('')}
+      </div>
+    </div>
+    <div class="picker-row">
+      <span class="picker-label" id="catLabel">CATEGORY</span>
+      <div class="chips" role="group" aria-labelledby="catLabel">
+        ${CATS.map(c => `<button data-cat="${c.id}" aria-pressed="${pref.cat === c.id}">${esc(c.name)}</button>`).join('')}
+      </div>
+    </div>
+    <div class="picker-go">
+      <button class="btn" id="playUnl">Play ${esc(MODE_INFO[pref.mode].name)} · ${esc(catName(pref.cat))}</button>
+      <span class="note">${pref.cat === 'general' ? 'A mix of every category.' : 'Only ' + esc(catName(pref.cat)) + ' puzzles.'}</span>
+    </div>`;
+  el.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { store.pref.mode = b.dataset.mode; save(); drawPicker(); });
+  el.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { store.pref.cat = b.dataset.cat; save(); drawPicker(); });
+  document.getElementById('playUnl').onclick = () => start('unlimited', store.pref.mode);
+}
+
+function pickUnlimited(mode, cat) {
+  const bank = bankFor(mode, cat);
+  const seen = new Set(store.seen[mode] || []);
+  let pool = bank.filter(p => !seen.has(p.id));
+  if (!pool.length) {
+    const ids = new Set(bank.map(p => p.id));
+    store.seen[mode] = (store.seen[mode] || []).filter(id => !ids.has(id));
+    pool = bank.slice();
+    toast('You played every puzzle here. Starting the list over.');
+  }
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function start(kind, mode, puzzle) {
+  const cat = kind === 'daily' ? null : store.pref.cat;
+  const p = puzzle || pickUnlimited(mode, cat);
+  game = { kind, mode, cat, puzzle: p, order: shuffledOrder(5), hintUsed: false, selected: null };
+  play();
+}
+
+function play() {
+  const g = game, p = g.puzzle;
+  const label = g.kind === 'daily' ? `Daily #${dailyNumber()}` : `${MODE_INFO[g.mode].name} · ${catName(g.cat || 'general')}`;
+  let left;
+  if (g.mode === 'easy') {
+    left = `<span class="note">Rank by</span><h1 class="statline">${esc(p.stat)}</h1>`;
+  } else {
+    left = `<span class="note">The clue</span><h1 class="clue">“${esc(p.clue)}”</h1>
+      ${g.hintUsed ? `<div class="hint">Hint: it's measured in <b>${esc(p.unit)}</b>.</div>` : `<button class="btn ghost" id="hintBtn" style="align-self:flex-start;min-height:46px;font-size:15px">Show a hint · −${HINT_COST} pts</button>`}`;
+  }
+  app.innerHTML = `
+    <section class="card game">
+      <div class="left">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="tag accent">${esc(label.toUpperCase())}</span><button class="linkbtn" id="quitBtn" style="padding:0">${g.kind === 'daily' ? 'Back home' : 'Change category'}</button></div>
+        ${left}
+        <p class="lede" style="font-size:15px">Drag the cards into order, most at the top. Tap two cards to swap them.</p>
+      </div>
+      <div class="lock"><button class="btn block" id="lockBtn">Lock it in</button></div>
+      <div class="right">
+        <span class="ends">MOST</span>
+        <ol class="rank" id="rank" aria-label="Your ranking, most at the top"></ol>
+        <span class="ends">LEAST</span>
+      </div>
+    </section>`;
+  drawList();
+  document.getElementById('quitBtn').onclick = g.kind === 'daily' ? home : unlimitedView;
+  document.getElementById('lockBtn').onclick = lockIn;
+  const hb = document.getElementById('hintBtn');
+  if (hb) hb.onclick = () => { g.hintUsed = true; play(); };
+  window.scrollTo(0, 0);
+}
+
+function drawList(focusIndex) {
+  const g = game, list = document.getElementById('rank');
+  list.innerHTML = g.order.map((a, i) => `
+    <li tabindex="0" data-i="${i}" class="${g.selected === i ? 'selected' : ''}" aria-label="${esc(g.puzzle.answer[a].name)}, position ${i + 1} of 5. Arrow keys move it.">
+      <span class="num">${i + 1}</span>
+      <span class="name">${esc(g.puzzle.answer[a].name)}</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 9h14M5 15h14"></path></svg>
+    </li>`).join('');
+  list.querySelectorAll('li').forEach(li => attachDrag(li, list));
+  if (focusIndex != null) list.querySelector(`li[data-i="${focusIndex}"]`).focus();
+}
+
+function move(from, to) {
+  const o = game.order; const [x] = o.splice(from, 1); o.splice(to, 0, x);
+}
+
+function attachDrag(li, list) {
+  li.addEventListener('keydown', e => {
+    const i = +li.dataset.i;
+    if (e.key === 'ArrowUp' && i > 0) { e.preventDefault(); move(i, i - 1); game.selected = null; drawList(i - 1); }
+    if (e.key === 'ArrowDown' && i < 4) { e.preventDefault(); move(i, i + 1); game.selected = null; drawList(i + 1); }
+  });
+  li.addEventListener('pointerdown', e => {
+    if (e.button !== undefined && e.button !== 0) return;
+    const items = [...list.children];
+    const start = +li.dataset.i;
+    const slot = li.offsetHeight + 10;
+    const y0 = e.clientY;
+    let target = start, moved = false;
+    try { li.setPointerCapture(e.pointerId); } catch (err) {}
+    const onMove = ev => {
+      const dy = ev.clientY - y0;
+      if (!moved && Math.abs(dy) < 6) return;
+      if (!moved) { moved = true; li.classList.add('dragging'); game.selected = null; items.forEach(x => x.classList.remove('selected')); }
+      li.style.transform = `translateY(${dy}px) scale(1.02)`;
+      target = Math.max(0, Math.min(4, Math.round(start + dy / slot)));
+      items.forEach((x, k) => {
+        if (x === li) return;
+        let shift = 0;
+        if (start < target && k > start && k <= target) shift = -slot;
+        if (start > target && k < start && k >= target) shift = slot;
+        x.style.transform = shift ? `translateY(${shift}px)` : '';
+      });
+    };
+    const onUp = () => {
+      li.removeEventListener('pointermove', onMove);
+      li.removeEventListener('pointerup', onUp);
+      li.removeEventListener('pointercancel', onUp);
+      if (moved) {
+        if (target !== start) move(start, target);
+        drawList();
+      } else {
+        // tap: select, or swap with the selected card
+        const sel = game.selected;
+        if (sel === null || sel === undefined) { game.selected = start; drawList(); }
+        else if (sel === start) { game.selected = null; drawList(); }
+        else { const o = game.order; [o[sel], o[start]] = [o[start], o[sel]]; game.selected = null; drawList(); }
+      }
+    };
+    li.addEventListener('pointermove', onMove);
+    li.addEventListener('pointerup', onUp);
+    li.addEventListener('pointercancel', onUp);
+  });
+}
+
+function lockIn() {
+  const g = game, score = scoreOf(g.order, g.hintUsed);
+  store.played += 1; store.total += score; store.best = Math.max(store.best, score);
+  if (score === 400) store.perfect += 1;
+  if (g.kind === 'daily') {
+    const k = dayKey(today());
+    const y = new Date(today()); y.setDate(y.getDate() - 1);
+    store.streak = store.lastDaily === dayKey(y) ? store.streak + 1 : (store.lastDaily === k ? store.streak : 1);
+    store.lastDaily = k;
+    store.daily[k] = { score, order: g.order.slice(), hint: g.hintUsed, n: dailyNumber() };
+  } else {
+    store.seen[g.mode] = (store.seen[g.mode] || []).concat(g.puzzle.id);
+  }
+  save();
+  syncSoon();
+  results();
+}
+
+function results() {
+  const g = game, p = g.puzzle, score = scoreOf(g.order, g.hintUsed), o = offs(g.order);
+  const yourPos = {}; g.order.forEach((a, i) => { yourPos[a] = i; });
+  const label = g.kind === 'daily' ? `Daily #${(store.daily[dayKey(today())] || {}).n || dailyNumber()}` : `${MODE_INFO[g.mode].name} · ${catName(g.cat || 'general')}`;
+  const chip = off => off === 0 ? `background:var(--exact);color:#fff` : off === 1 ? `background:var(--off1);color:#14161B` : off === 2 ? `background:var(--off2);color:#14161B` : `background:var(--off3);color:#fff`;
+  const clueLine = p.clue ? ` Clue: “${esc(p.clue)}”` : '';
+  app.innerHTML = `
+    <section class="card results">
+      <div class="left">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><span class="tag accent">${esc(label.toUpperCase())}</span></div>
+        <div class="score"><b id="scoreNum">0</b><span>/400</span></div>
+        <div class="squares" role="img" aria-label="Your placements">${o.map(x => `<i style="background:${SQ[x]}"></i>`).join('')}</div>
+        ${g.hintUsed ? `<span class="note">Includes −${HINT_COST} for the hint.</span>` : ''}
+        <div class="reveal"><small>THE HIDDEN STAT</small><b>${esc(p.stat)}</b><span>Source: ${esc(p.source)}.${p.asof ? ` Numbers as of ${esc(p.asof)}.` : ""}${clueLine}</span></div>
+        ${p.fact ? `<div class="dyk"><small>DID YOU KNOW?</small><p>${esc(p.fact)}</p></div>` : ''}
+      </div>
+      <div class="right">
+        ${p.answer.map((a, i) => `
+          <div class="row" style="animation-delay:${150 + i * 160}ms">
+            <span class="r">${i + 1}</span>
+            <div class="n"><b>${esc(a.name)}</b><span>${esc(a.display)}</span></div>
+            <span class="chipr" style="${chip(Math.min(3, Math.abs(yourPos[i] - i)))}">You #${yourPos[i] + 1}</span>
+            <span class="pts${ptsFor(i, yourPos[i]) ? '' : ' zero'}" aria-label="${ptsFor(i, yourPos[i])} points">+${ptsFor(i, yourPos[i])}</span>
+          </div>`).join('')}
+        <div class="ptsnote">${g.hintUsed ? `Hint: −${HINT_COST} · ` : ''}#1 right 100 · exact 75 · one off 25</div>
+        <div class="actions">
+          <button class="btn" id="shareBtn">Share result</button>
+          ${g.kind === 'daily'
+            ? `<button class="btn outline" id="moreBtn">Play Unlimited</button>`
+            : `<button class="btn outline" id="nextBtn">Next puzzle</button>`}
+        </div>
+        <button class="linkbtn" id="backBtn" style="align-self:center;margin-top:8px">${g.kind === 'daily' ? 'Back home' : 'Change mode or category'}</button>
+      </div>
+    </section>`;
+  countUp(document.getElementById('scoreNum'), score);
+  document.getElementById('shareBtn').onclick = () => share(score, o, label);
+  const nb = document.getElementById('nextBtn'); if (nb) nb.onclick = () => start('unlimited', g.mode);
+  const mb = document.getElementById('moreBtn'); if (mb) mb.onclick = unlimitedView;
+  document.getElementById('backBtn').onclick = g.kind === 'daily' ? home : unlimitedView;
+  renderStreak();
+  window.scrollTo(0, 0);
+}
+
+function countUp(el, to) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = to; return; }
+  const t0 = performance.now(), dur = 700;
+  const step = t => { const k = Math.min(1, (t - t0) / dur); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+function share(score, o, label) {
+  const text = `Ballpark · Batting Order · ${label}\n${o.map(x => EMOJI[x]).join('')} ${score}/400\nhttps://playballpark.xyz`;
+  const done = () => toast('Copied. Paste it anywhere.');
+  try {
+    navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text));
+  } catch (e) { fallbackCopy(text); }
+}
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove(); toast(ok ? 'Copied. Paste it anywhere.' : 'Could not copy. Try again.');
+}
+
+/* ---------- wiring ---------- */
+const how = document.getElementById('how');
+document.getElementById('howBtn').onclick = () => { location.href = '/how-to-play/'; };
+document.getElementById('acctBtn').onclick = () => openAccount('signup');
+document.getElementById('howClose').onclick = () => how.close();
+document.getElementById('homeBtn').onclick = () => { if (location.hash) { location.hash = ''; } else { home(); } };
+
+
+
+/* ---------- optional accounts: sync stats across devices ---------- */
+let account = null;
+function deviceId() {
+  if (!store.id || !/^[a-z0-9]{4,16}$/.test(store.id)) { store.id = (Math.random().toString(36).slice(2) + 'xxxxxxxx').slice(0, 10); save(); }
+  return store.id;
+}
+function totals() {
+  const t = { played: store.played, total: store.total, best: store.best, perfect: store.perfect };
+  for (const k in (store.peers || {})) { const q = store.peers[k]; t.played += q.p; t.total += q.t; t.best = Math.max(t.best, q.b); t.perfect += q.f; }
+  return t;
+}
+function syncPayload() {
+  const daily = {};
+  for (const [k, v] of Object.entries(store.daily)) daily[k] = { score: v.score, hint: !!v.hint, n: v.n || 0 };
+  return { device: deviceId(), own: { p: store.played, t: store.total, b: store.best, f: store.perfect }, daily };
+}
+function recomputeStreak() {
+  const keys = Object.keys(store.daily).sort(); if (!keys.length) return;
+  const last = keys[keys.length - 1]; let run = 1;
+  const d = new Date(last + 'T12:00:00');
+  for (;;) { d.setDate(d.getDate() - 1); if (store.daily[dayKey(d)]) run++; else break; }
+  store.lastDaily = last; store.streak = run;
+}
+function applyServer(data) {
+  if (!data) return;
+  const me = deviceId(); const peers = {};
+  for (const [k, v] of Object.entries(data.devices || {})) if (k !== me) peers[k] = v;
+  store.peers = peers;
+  for (const [k, v] of Object.entries(data.daily || {})) if (!store.daily[k]) store.daily[k] = { score: v.score, hint: !!v.hint, n: v.n };
+  recomputeStreak(); save();
+}
+async function api(path, body) {
+  const r = await fetch(path, body === undefined ? { credentials: 'same-origin' }
+    : { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  let j = {}; try { j = await r.json(); } catch (e) {}
+  if (!r.ok || !j.ok) throw new Error(j.error || 'Something went wrong. Try again.');
+  return j;
+}
+function refreshAccountUI() {
+  const b = document.getElementById('acctBtn');
+  b.classList.toggle('on', !!account);
+  b.setAttribute('aria-label', account ? 'Account: ' + account.email : 'Sign in');
+  if (!game) home();
+}
+let syncTimer = null;
+function syncSoon() {
+  if (!account) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    try { const j = await api('/api/sync', { sync: syncPayload() }); applyServer(j.data); }
+    catch (e) { if (/Signed out/.test(e.message)) { account = null; store.account = null; save(); refreshAccountUI(); } }
+  }, 400);
+}
+async function initAccount() {
+  if (location.protocol === 'file:') return;
+  try {
+    const j = await api('/api/me');
+    const was = !!store.account; account = j.user; store.account = account ? { email: account.email } : null; if (was || account) save();
+    if (account) { applyServer(j.data); syncSoon(); }
+    refreshAccountUI();
+  } catch (e) {}
+}
+function openAccount(tab) {
+  const dlg = document.getElementById('acct'); const box = document.getElementById('acctInner');
+  if (account) {
+    const T = totals();
+    box.innerHTML = `
+      <h2>Your account</h2>
+      <p>Signed in as <b>${esc(account.email)}</b>. Your stats sync on every device where you sign in.</p>
+      <ul class="mergelist" style="list-style:none;padding:0"><li style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>Games played</span><b>${T.played}</b></li><li style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>Devices synced</span><b>${Object.keys(store.peers || {}).length + 1}</b></li></ul>
+      <div class="dlg-actions"><button class="btn ghost" id="acctOut">Sign out</button><button class="btn" id="acctDone">Done</button></div>
+      <button class="linkbtn dangerlink" id="acctDel" style="align-self:flex-start;font-size:13px">Delete account</button>`;
+    document.getElementById('acctDone').onclick = () => dlg.close();
+    document.getElementById('acctOut').onclick = async () => {
+      try { await api('/api/logout', {}); } catch (e) {}
+      account = null; store.account = null; store.peers = {}; save(); dlg.close(); refreshAccountUI(); toast('Signed out. Your stats on this device are still here.');
+    };
+    document.getElementById('acctDel').onclick = () => {
+      box.innerHTML = `
+        <h2>Delete account?</h2>
+        <p>This deletes your account and the synced copy of your stats. Stats on this device stay. This can't be undone.</p>
+        <div class="field"><label for="delPw">Password</label><input id="delPw" type="password" autocomplete="current-password"></div>
+        <p class="formerr" id="delErr" role="alert"></p>
+        <div class="dlg-actions"><button class="btn ghost" id="delNo">Cancel</button><button class="btn" id="delYes" style="background:#D93F3F;color:#fff">Delete account</button></div>`;
+      document.getElementById('delNo').onclick = () => openAccount();
+      document.getElementById('delYes').onclick = async () => {
+        const err = document.getElementById('delErr'); err.textContent = '';
+        const pw = document.getElementById('delPw').value;
+        if (!pw) { err.textContent = 'Enter your password first.'; return; }
+        try { await api('/api/delete', { password: pw }); account = null; store.account = null; store.peers = {}; save(); dlg.close(); refreshAccountUI(); toast('Account deleted.'); }
+        catch (e) { err.textContent = e.message; }
+      };
+    };
+  } else {
+    const mode = tab === 'signin' ? 'signin' : 'signup';
+    box.innerHTML = `
+      <h2>${mode === 'signup' ? 'Sync your stats' : 'Welcome back'}</h2>
+      <p>${mode === 'signup' ? 'Optional. Make an account to keep your stats and streak on every device. Everything still saves on this one either way.' : 'Sign in and your stats from this device and your others get combined.'}</p>
+      <div class="tabs2" role="tablist"><button role="tab" aria-selected="${mode === 'signup'}" id="tabUp">Create account</button><button role="tab" aria-selected="${mode === 'signin'}" id="tabIn">Sign in</button></div>
+      <form id="acctForm" novalidate style="display:flex;flex-direction:column;gap:12px">
+        <div class="field"><label for="acEmail">Email</label><input id="acEmail" type="email" autocomplete="email" inputmode="email" required></div>
+        <div class="field"><label for="acPw">Password${mode === 'signup' ? ' (8+ characters)' : ''}</label><input id="acPw" type="password" autocomplete="${mode === 'signup' ? 'new-password' : 'current-password'}" required></div>
+        <p class="formerr" id="acErr" role="alert"></p>
+        <div class="dlg-actions"><button type="button" class="btn ghost" id="acCancel">Not now</button><button type="submit" class="btn block" id="acGo">${mode === 'signup' ? 'Create account' : 'Sign in'}</button></div>
+        ${mode === 'signup' ? `<p class="note">By creating an account, you confirm you're 13 or older and agree to the <a href="/terms/" target="_blank" rel="noopener">Terms</a> and <a href="/privacy/" target="_blank" rel="noopener">Privacy Policy</a>.</p>` : ''}
+        ${mode === 'signin' ? `<p class="note">Forgot your password? Email <a href="mailto:ballpark.contact@proton.me">ballpark.contact@proton.me</a> from your account's address and we'll help.</p>` : ''}
+      </form>`;
+    document.getElementById('tabUp').onclick = () => openAccount('signup');
+    document.getElementById('tabIn').onclick = () => openAccount('signin');
+    document.getElementById('acCancel').onclick = () => dlg.close();
+    const email = document.getElementById('acEmail'), pw = document.getElementById('acPw'), err = document.getElementById('acErr');
+    [email, pw].forEach(i => i.oninput = () => { err.textContent = ''; });
+    document.getElementById('acctForm').onsubmit = async (ev) => {
+      ev.preventDefault(); err.textContent = '';
+      const e = email.value.trim(), p = pw.value;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) { err.textContent = 'Enter a valid email address.'; email.focus(); return; }
+      if (mode === 'signup' && p.length < 8) { err.textContent = 'Use a password with at least 8 characters.'; pw.focus(); return; }
+      if (!p) { err.textContent = 'Enter your password.'; pw.focus(); return; }
+      const go = document.getElementById('acGo'); go.disabled = true; go.textContent = mode === 'signup' ? 'Creating…' : 'Signing in…';
+      try {
+        const j = await api(mode === 'signup' ? '/api/signup' : '/api/login', { email: e, password: p, sync: syncPayload() });
+        account = j.user; store.account = { email: account.email }; applyServer(j.data);
+        dlg.close(); refreshAccountUI(); toast(mode === 'signup' ? 'Account created. Your stats will sync.' : 'Signed in. Your stats are synced.');
+      } catch (x) { err.textContent = x.message; go.disabled = false; go.textContent = mode === 'signup' ? 'Create account' : 'Sign in'; }
+    };
+  }
+  if (!dlg.open) dlg.showModal();
+  const f = document.getElementById('acEmail'); if (f) f.focus();
+}
+
+/* ---------- old #links now live at real pages ---------- */
+const OLD_PAGES = ['how-to-play', 'about', 'privacy', 'contact'];
+function route() {
+  const name = location.hash.replace('#', '');
+  if (OLD_PAGES.includes(name)) { location.replace('/' + name + '/'); return; }
+  home();
+}
+window.addEventListener('hashchange', route);
+if (store.account) account = store.account;
+document.getElementById('acctBtn').classList.toggle('on', !!account);
+route();
+initAccount();
+</script>
+</body>
+</html>

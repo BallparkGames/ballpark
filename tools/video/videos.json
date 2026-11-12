@@ -1,0 +1,9 @@
+[{"id":"caffeine","hook":"Rank these by caffeine.","sub":"Almost everyone gets Red Bull wrong.","stat":"Caffeine per serving",
+ "items":[["Starbucks Pike Place","grande","310 mg"],["Celsius","12 oz","200 mg"],["Monster","16 oz","160 mg"],["Red Bull","8.4 oz","80 mg"],["Coca-Cola","12 oz","34 mg"]],
+ "scr":[3,0,4,1,2],"fact":"A grande Starbucks has almost 4× the caffeine of a Red Bull.","src":"manufacturer figures"},
+{"id":"coastline","hook":"Which state has the most coastline?","sub":"It's not even close.","stat":"Miles of coastline",
+ "items":[["Alaska","","6,640 mi"],["Florida","","1,350 mi"],["California","","840 mi"],["Hawaii","","750 mi"],["Louisiana","","397 mi"]],
+ "scr":[1,2,3,0,4],"fact":"Alaska has more coastline than every other state combined.","src":"NOAA general coastline"},
+{"id":"sugar","hook":"Rank these by sugar.","sub":"The Arizona tea one hurts.","stat":"Sugar per can or bottle",
+ "items":[["Monster","16 oz","54 g"],["Arizona Green Tea","23 oz can","51 g"],["Mountain Dew","12 oz","46 g"],["Coca-Cola","12 oz","39 g"],["Red Bull","8.4 oz","27 g"]],
+ "scr":[4,1,3,0,2],"fact":"One 16 oz Monster has more sugar than the FDA's 50 g daily value for added sugar.","src":"nutrition labels"}]

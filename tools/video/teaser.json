@@ -1,0 +1,8 @@
+[{"name":"daily3-teaser","daily":3,"mode":"normal","start":[2,0,4,1,3],"scroll":0,"steps":[
+ {"cap":"today's daily puzzle. only clue: “loose change” 🤔","wait":2600},
+ {"cap":"ok so it's coins… but WHAT about them","wait":1800},
+ {"cap":"value? no that's too easy","drag":[1,0]},{"wait":700},
+ {"cap":"maybe it's how big they are??","drag":[4,1]},{"wait":800},
+ {"cap":"the nickel is throwing me off","drag":[2,3]},{"wait":1400},
+ {"cap":"i'm not telling you my answer 😶","wait":2000},
+ {"cap":"play it before midnight. link in bio 👀","wait":3000}]}]

@@ -1,0 +1,27 @@
+[{"name":"caffeine","id":"easy-315","mode":"easy","start":[3,2,4,0,1],"scroll":0,"steps":[
+ {"cap":"rank these by caffeine… easy right?","wait":2200},
+ {"cap":"red bull HAS to be #1","drag":[1,0]},{"wait":700},
+ {"cap":"starbucks maybe #2?","drag":[3,1]},{"wait":600},
+ {"drag":[4,2]},{"wait":500},
+ {"cap":"locking it in 😬","wait":1100},{"lock":true},
+ {"cap":"200/400 💀","wait":1600},
+ {"cap":"wait… red bull is THAT low??","scroll":"list","wait":3200},
+ {"cap":"starbucks has 4x the caffeine of red bull 😭","wait":2600}]},
+{"name":"sugar","id":"easy-326","mode":"easy","start":[3,1,4,2,0],"scroll":0,"steps":[
+ {"cap":"which drink has the most sugar?","wait":2200},
+ {"cap":"mountain dew is the obvious #1","drag":[1,0]},{"wait":600},
+ {"cap":"arizona tea is basically water right","drag":[4,1]},{"wait":500},
+ {"drag":[4,3]},{"wait":400},
+ {"cap":"lock it 🙏","wait":1000},{"lock":true},
+ {"cap":"175/400… what","wait":1600},
+ {"cap":"ARIZONA TEA beat mountain dew??","scroll":"list","wait":3200},
+ {"cap":"51 grams in one can 😭","wait":2400}]},
+{"name":"due-any-day","id":"normal-002","mode":"normal","start":[2,4,1,0,3],"scroll":0,"steps":[
+ {"cap":"only clue: “due any day” 🤔","wait":2300},
+ {"cap":"ok it's gotta be pregnancy length","wait":1400},
+ {"cap":"humans take the longest obviously","drag":[2,0]},{"wait":600},
+ {"drag":[3,1]},{"wait":400},{"drag":[4,3]},{"wait":500},
+ {"cap":"locking in","wait":900},{"lock":true},
+ {"cap":"275/400 not bad","wait":1500},
+ {"cap":"wait a HORSE is pregnant longer than us??","scroll":"list","wait":3200},
+ {"cap":"340 days. 11 months. horses 😭","wait":2400}]}]

@@ -1,0 +1,9 @@
+[{"id":"normal-rent","clue":"Rent's due","hook":"Rank them most → least.","stat":"Price on the Monopoly board",
+ "items":[["Boardwalk","","$400"],["Pennsylvania Avenue","","$320"],["Reading Railroad","","$200"],["St. Charles Place","","$140"],["Baltic Avenue","","$60"]],
+ "scr":[3,0,4,2,1],"fact":"Every railroad in Monopoly costs $200, and both utilities cost $150.","src":"standard U.S. Monopoly board"},
+{"id":"normal-longrun","clue":"Long run","hook":"Rank them most → least.","stat":"Race distance",
+ "items":[["Ironman triathlon","","140.6 mi"],["Marathon","","26.2 mi"],["Half marathon","","13.1 mi"],["5K","","3.1 mi"],["Mile run","","1 mi"]],
+ "scr":[2,4,0,3,1],"fact":"The Ironman's 140.6 miles came from adding up three Hawaii races: a 2.4-mile swim, a 112-mile bike ride and a marathon.","src":"event rules"},
+{"id":"normal-breakaleg","clue":"Break a leg","hook":"Rank them most → least.","stat":"Number of bones",
+ "items":[["One foot","with ankle","26"],["Ribs","","24"],["Face","","14"],["One ankle","","7"],["One middle ear","","3"]],
+ "scr":[2,4,0,3,1],"fact":"Your two feet hold 52 bones, about a quarter of the 206 in your whole body.","src":"standard adult anatomy"}]
